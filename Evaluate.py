@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 from skimage.measure import compare_ssim as ssim
 import cv2
 
-#Define the mean square function
+#check the numpy array
 def _assert_compatiable(imageA, imageB):
     if not imageA.dtype == imageB.dtype:
         raise ValueError('Images must be same dtype')
     if not imageA.shape == imageB.shape:
         raise ValueError('Input images must be same dimension')
     return
-
+#check and conver the array to float
 def _as_floats(imageA,imageB):
     float_type = np.result_type(imageA.dtype,imageB.dtype,np.float32)
     if imageA.dtype != float_type:
@@ -21,17 +21,17 @@ def _as_floats(imageA,imageB):
     if imageB.dtype != float_type:
         imageB = imageB.astype(float_type)
     return imageA, imageB
-
+#Define the mean square function
 def mse(imageA, imageB):
     err= np.sum((imageA.astype('float') - imageB.astype('float')) ** 2)
     err /= float(imageA.shape[0] * imageA.shape[1])
     return err
-
+#compare the mse of the two images
 def compare_mse(imageA,imageB):
     _assert_compatiable(imageA,imageB)
     imageA,imageB = _as_floats(imageA,imageB)
     return np.mean(np.square(imageA - imageB), dtype=np.float64)
-
+#compare the normalised mean squared error
 def nrmse(imageA, imageB, norm_type='Euclidean'):
     _assert_compatiable(imageA,imageB)
     imageA, imageB = _as_floats(imageA, imageB)
@@ -45,7 +45,8 @@ def nrmse(imageA, imageB, norm_type='Euclidean'):
     else:
         raise ValueError('image unsupported norm_type')
     return np.sqrt(compare_mse(imageA, imageB)) / denom
-
+#compare the PSNR of the two images
+def
 
 #Define the compare image function using ssim
 def compare_image(imageA, imageB, title):
