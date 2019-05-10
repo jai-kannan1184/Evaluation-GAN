@@ -46,14 +46,31 @@ def nrmse(imageA, imageB, norm_type='Euclidean'):
         raise ValueError('image unsupported norm_type')
     return np.sqrt(compare_mse(imageA, imageB)) / denom
 #compare the PSNR of the two images
-def
+def compare_psnr(imageA, imageB, data_range=None, dynamic_range=None):
+    _assert_compatiable(imageA, imageB)
+    if dynamic_range is not None:
+        warn('dynamic_range has been deprecated in favor of data_range. The dynamic_range argument will be removed',skimage_deprecation)
+        data_range= dynamic_range
+    if data_range is None:
+        dmin, dmax = dtype_range[imageA.dtype.type]
+        true_min, true_max = np.min(imageA), np.max(imageA)
+        if true_max > dmax or true_min < dmin:
+            raise ValueError('intensity value out of range for the data type')
+        if true_min >= 0:
+            data_range = dmax
+        else:
+            data_range = dmax - dmin
+    imageA, imageB = _as_floats(imageA, imageB)
+    err = compare_mse(imageA, imageB)
+    return 10 * np.log10((data_range ** 2) / err)
 
 #Define the compare image function using ssim
 def compare_image(imageA, imageB, title):
     m= mse(imageA, imageB)
     s= ssim(imageA, imageB)
     n= nrmse(imageA,imageB)
-    fig= plt.figure('MSE: %.2f, SSIM: %.2f, NRMSE: %.2f' % (m, s, n))
+    p= compare_psnr(imageA,imageB)
+    fig= plt.figure('MSE: %.2f, SSIM: %.2f, NRMSE: %.2f, PSNR: %.2f' % (m, s, n, p))
 
     #Display image A
     ax = fig.add_subplot(1, 2, 1)
