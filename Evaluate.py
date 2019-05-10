@@ -1,20 +1,58 @@
+from __future__ import division
 import numpy as np
-
+from skimage.util.dtype import dtype_range
+from skimage._shared.utils import skimage_deprecation, warn
 import matplotlib.pyplot as plt
 from skimage.measure import compare_ssim as ssim
 import cv2
 
 #Define the mean square function
+def _assert_compatiable(imageA, imageB):
+    if not imageA.dtype == imageB.dtype:
+        raise ValueError('Images must be same dtype')
+    if not imageA.shape == imageB.shape:
+        raise ValueError('Input images must be same dimension')
+    return
+
+def _as_floats(imageA,imageB):
+    float_type = np.result_type(imageA.dtype,imageB.dtype,np.float32)
+    if imageA.dtype != float_type:
+        imageA = imageA.astype(float_type)
+    if imageB.dtype != float_type:
+        imageB = imageB.astype(float_type)
+    return imageA, imageB
+
 def mse(imageA, imageB):
     err= np.sum((imageA.astype('float') - imageB.astype('float')) ** 2)
     err /= float(imageA.shape[0] * imageA.shape[1])
     return err
 
+def compare_mse(imageA,imageB):
+    _assert_compatiable(imageA,imageB)
+    imageA,imageB = _as_floats(imageA,imageB)
+    return np.mean(np.square(imageA - imageB), dtype=np.float64)
+
+def nrmse(imageA, imageB, norm_type='Euclidean'):
+    _assert_compatiable(imageA,imageB)
+    imageA, imageB = _as_floats(imageA, imageB)
+    norm_type = norm_type.lower()
+    if norm_type == 'euclidean':
+        denom = np.sqrt(np.mean((imageA*imageB), dtype=np.float64))
+    elif norm_type == 'min-max':
+        denom = imageA.max() - imageA.min()
+    elif norm_type == 'mean':
+        denom = imageA.mean()
+    else:
+        raise ValueError('image unsupported norm_type')
+    return np.sqrt(compare_mse(imageA, imageB)) / denom
+
+
 #Define the compare image function using ssim
 def compare_image(imageA, imageB, title):
     m= mse(imageA, imageB)
     s= ssim(imageA, imageB)
-    fig= plt.figure('MSE: %.2f, SSIM: %.2f' % (m, s))
+    n= nrmse(imageA,imageB)
+    fig= plt.figure('MSE: %.2f, SSIM: %.2f, NRMSE: %.2f' % (m, s, n))
 
     #Display image A
     ax = fig.add_subplot(1, 2, 1)
