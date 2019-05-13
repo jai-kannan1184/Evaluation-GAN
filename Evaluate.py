@@ -75,12 +75,12 @@ def compare_image(imageA, imageB, title):
     #Display image A
     ax = fig.add_subplot(1, 2, 1)
     plt.imshow(imageA, cmap= plt.cm.gray)
-    plt.axis('off')
+    plt.axis('on')
 
     #Display image B
     ax = fig.add_subplot(1, 2, 2)
     plt.imshow(imageB, cmap= plt.cm.gray)
-    plt.axis('off')
+    plt.axis('on')
 
     plt.show()
 #Load the images
@@ -90,6 +90,8 @@ map_3= cv2.imread('images/508-outputs.png')
 map_4= cv2.imread('images/508-targets.png')
 map_5= cv2.imread('images/1.png')
 map_6= cv2.imread('images/1t.png')
+map_7= cv2.imread('images/test1.png')
+map_8= cv2.imread('images/test2.png')
 
 #Resize into zero patting
 map_1= cv2.resize(map_1, (10000, 10000))
@@ -98,27 +100,31 @@ map_3= cv2.resize(map_3, (10000, 10000))
 map_4= cv2.resize(map_4, (10000, 10000))
 #map_5= cv2.resize(map_5, (10000, 10000))
 #map_6= cv2.resize(map_6, (10000, 10000))
+map_7= cv2.resize(map_7, (1000, 1000))
+map_8= cv2.resize(map_8, (1000, 1000))
 
 #convert to gray
 map_1= cv2.cvtColor(map_1, cv2.COLOR_BGR2GRAY)
 map_2= cv2.cvtColor(map_2, cv2.COLOR_BGR2GRAY)
 map_3= cv2.cvtColor(map_3, cv2.COLOR_BGR2GRAY)
-map_4=cv2.cvtColor(map_4, cv2.COLOR_BGR2GRAY)
-map_5=cv2.cvtColor(map_5, cv2.COLOR_BGR2GRAY)
-map_6=cv2.cvtColor(map_6, cv2.COLOR_BGR2GRAY)
-
+map_4= cv2.cvtColor(map_4, cv2.COLOR_BGR2GRAY)
+map_5= cv2.cvtColor(map_5, cv2.COLOR_BGR2GRAY)
+map_6= cv2.cvtColor(map_6, cv2.COLOR_BGR2GRAY)
+#map_7= cv2.cvtColor(map_7, cv2.COLOR_BGR2GRAY)
+#map_8= cv2.cvtColor(map_8, cv2.COLOR_BGR2GRAY)
 #initilize the figure
 fig = plt.figure('maps')
-images = ('First map', map_1), ('Second map', map_2), ('Third map', map_3), ('Fourth map', map_4), ('Fifth map', map_5), ('Sixith map', map_6)
+images = ('First map', map_1), ('Second map', map_2), ('Third map', map_3), ('Fourth map', map_4), ('Fifth map', map_5), ('Sixith map', map_6), ('Seventh map', map_7), ('Eights map', map_8)
 
 #loop the images
 for(i, (name, image)) in enumerate(images):
-    ax = fig.add_subplot(1, 6, i+1)
+    ax = fig.add_subplot(1, 9, i+1)
     #plt.imshow(images, cmap= plt.cm.gray)
     plt.axis('off')
 
 plt.show()
-compare_image(map_1,map_1,'same image')
+compare_image(map_1, map_1,'same image')
 compare_image(map_1, map_2, 'First map vs. Second map')
 compare_image(map_3, map_4, 'Third map vs. Fourth map')
 compare_image(map_5, map_6, 'Fifth map vs Sixth map')
+compare_image(map_7, map_8, 'Seventh map vs. Eighth map')
