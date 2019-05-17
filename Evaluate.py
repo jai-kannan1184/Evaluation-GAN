@@ -63,6 +63,11 @@ def compare_psnr(imageA, imageB, data_range=None, dynamic_range=None):
     imageA, imageB = _as_floats(imageA, imageB)
     err = compare_mse(imageA, imageB)
     return 10 * np.log10((data_range ** 2) / err)
+def dssim (imageA, imageB):
+    _assert_compatiable(imageA, imageB)
+    _as_floats(imageA, imageB)
+    R = ssim(imageA, imageB)
+    return 10 * np.log10(R)
 
 #Define the compare image function using ssim
 def compare_image(imageA, imageB, title):
@@ -70,7 +75,8 @@ def compare_image(imageA, imageB, title):
     s= ssim(imageA, imageB)
     n= nrmse(imageA,imageB)
     p= compare_psnr(imageA,imageB)
-    fig= plt.figure('MSE: %.2f, SSIM: %.2f, NRMSE: %.2f, PSNR: %.2f' % (m, s, n, p))
+    d= dssim(imageA, imageB)
+    fig= plt.figure('MSE: %.2f, SSIM: %.2f, NRMSE: %.2f, PSNR: %.2f, DSSIM: %.2f' % (m, s, n, p, d))
 
     #Display image A
     ax = fig.add_subplot(1, 2, 1)
